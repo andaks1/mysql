@@ -61,6 +61,29 @@ MySQL [test_db]> select count(*) from orders where price>300;
 Используя таблицу INFORMATION_SCHEMA.USER_ATTRIBUTES, получите данные по пользователю `test` и 
 **приведите в ответе к задаче**.
 
+#### Ответ на задание 2.
+
+- Ниже приведены команды создания и их вывод:
+```SQL
+MySQL [test_db]> create user 'test'@'localhost' identified by 'test-pass' WITH MAX_QUERIES_PER_HOUR 100 password expire interval 180 day failed_login_attempts 3 PASSWORD_LOCK_TIME 1 ATTRIBUTE '{"fname": "James", "lname": "Pretty"}';
+Query OK, 0 rows affected (0.020 sec)
+
+MySQL [test_db]> 
+MySQL [test_db]> 
+MySQL [test_db]> 
+MySQL [test_db]> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user='test'
+    -> ;
++------+-----------+---------------------------------------+
+| USER | HOST      | ATTRIBUTE                             |
++------+-----------+---------------------------------------+
+| test | localhost | {"fname": "James", "lname": "Pretty"} |
++------+-----------+---------------------------------------+
+1 row in set (0.002 sec)
+
+MySQL [test_db]> GRANT SELECT ON test_db.* TO 'test'@'localhost';
+Query OK, 0 rows affected, 1 warning (0.010 sec)
+```
+
 ## Задача 3
 
 Установите профилирование `SET profiling = 1`.
