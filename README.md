@@ -95,6 +95,144 @@ Query OK, 0 rows affected, 1 warning (0.010 sec)
 - на `MyISAM`,
 - на `InnoDB`.
 
+#### Ответ на задание 3.
+
+<details>
+
+<summary>Простыня команд:</summary>
+
+```SQL
+MySQL [test_db]> set profiling=1;
+Query OK, 0 rows affected, 1 warning (0.001 sec)
+
+MySQL [test_db]> select engine, table_schema from information_schema.tables where table_schema='test_db';
++--------+--------------+
+| ENGINE | TABLE_SCHEMA |
++--------+--------------+
+| InnoDB | test_db      |
++--------+--------------+
+1 row in set (0.002 sec)
+
+MySQL [test_db]> show tables
+    -> ;
++-------------------+
+| Tables_in_test_db |
++-------------------+
+| orders            |
++-------------------+
+1 row in set (0.002 sec)
+
+MySQL [test_db]> alter table orders ENGINE='MyISAM';
+Query OK, 5 rows affected (0.053 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MySQL [test_db]> select engine, table_schema from information_schema.tables where table_schema='test_db';
++--------+--------------+
+| ENGINE | TABLE_SCHEMA |
++--------+--------------+
+| MyISAM | test_db      |
++--------+--------------+
+1 row in set (0.002 sec)
+
+MySQL [test_db]> alter table orders ENGINE='InnoDB';
+Query OK, 5 rows affected (0.064 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MySQL [test_db]> select engine, table_schema from information_schema.tables where table_schema='test_db';
++--------+--------------+
+| ENGINE | TABLE_SCHEMA |
++--------+--------------+
+| InnoDB | test_db      |
++--------+--------------+
+1 row in set (0.002 sec)
+
+MySQL [test_db]> show profiles;
++----------+------------+-----------------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                                   |
++----------+------------+-----------------------------------------------------------------------------------------+
+|        1 | 0.00141400 | select engine, table_schema from information_schema.tables where table_schema='test_db' |
+|        2 | 0.00193125 | show tables                                                                             |
+|        3 | 0.05259250 | alter table orders ENGINE='MyISAM'                                                      |
+|        4 | 0.00194975 | select engine, table_schema from information_schema.tables where table_schema='test_db' |
+|        5 | 0.06547300 | alter table orders ENGINE='InnoDB'                                                      |
+|        6 | 0.00156425 | select engine, table_schema from information_schema.tables where table_schema='test_db' |
++----------+------------+-----------------------------------------------------------------------------------------+
+6 rows in set, 1 warning (0.001 sec)
+
+MySQL [test_db]> show profile for query 3;
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.000069 |
+| Executing hook on transaction  | 0.000005 |
+| starting                       | 0.000091 |
+| checking permissions           | 0.000008 |
+| checking permissions           | 0.000004 |
+| init                           | 0.000010 |
+| Opening tables                 | 0.000289 |
+| setup                          | 0.000083 |
+| creating table                 | 0.000892 |
+| waiting for handler commit     | 0.000016 |
+| waiting for handler commit     | 0.003855 |
+| After create                   | 0.000381 |
+| System lock                    | 0.000011 |
+| copy to tmp table              | 0.000082 |
+| waiting for handler commit     | 0.000008 |
+| waiting for handler commit     | 0.000009 |
+| waiting for handler commit     | 0.000024 |
+| rename result table            | 0.000054 |
+| waiting for handler commit     | 0.021868 |
+| waiting for handler commit     | 0.000018 |
+| waiting for handler commit     | 0.002989 |
+| waiting for handler commit     | 0.000013 |
+| waiting for handler commit     | 0.007461 |
+| waiting for handler commit     | 0.000020 |
+| waiting for handler commit     | 0.001101 |
+| end                            | 0.009592 |
+| query end                      | 0.003095 |
+| closing tables                 | 0.000019 |
+| waiting for handler commit     | 0.000023 |
+| freeing items                  | 0.000478 |
+| cleaning up                    | 0.000028 |
++--------------------------------+----------+
+31 rows in set, 1 warning (0.001 sec)
+
+MySQL [test_db]> show profile for query 5;
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.000066 |
+| Executing hook on transaction  | 0.000094 |
+| starting                       | 0.000022 |
+| checking permissions           | 0.000006 |
+| checking permissions           | 0.000005 |
+| init                           | 0.000011 |
+| Opening tables                 | 0.000214 |
+| setup                          | 0.000046 |
+| creating table                 | 0.000073 |
+| After create                   | 0.028503 |
+| System lock                    | 0.000018 |
+| copy to tmp table              | 0.000141 |
+| rename result table            | 0.000991 |
+| waiting for handler commit     | 0.000040 |
+| waiting for handler commit     | 0.004666 |
+| waiting for handler commit     | 0.000012 |
+| waiting for handler commit     | 0.017665 |
+| waiting for handler commit     | 0.000018 |
+| waiting for handler commit     | 0.003949 |
+| waiting for handler commit     | 0.000016 |
+| waiting for handler commit     | 0.003579 |
+| end                            | 0.000500 |
+| query end                      | 0.002851 |
+| closing tables                 | 0.000025 |
+| waiting for handler commit     | 0.000044 |
+| freeing items                  | 0.001690 |
+| cleaning up                    | 0.000235 |
++--------------------------------+----------+
+27 rows in set, 1 warning (0.001 sec)
+```
+</details>
+
 ## Задача 4 
 
 Изучите файл `my.cnf` в директории /etc/mysql.
