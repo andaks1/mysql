@@ -247,6 +247,32 @@ MySQL [test_db]> show profile for query 5;
 
 Приведите в ответе изменённый файл `my.cnf`.
 
+#### Ответ на задание 4.
+
+```BASH
+# grep -v ^# my.cnf/my.cnf 
+
+[mysqld]
+
+innodb_file_per_table = 1		// в этом параметре и следующим за ним 
+innodb_file_format = Barracuda		// задаются параметры сжатия таблиц типа InnoDB
+innodb_flush_log_at_trx_commit = 0	// эта настройка позволяет кратно повысить производительность чтения/записи в ущерб сохранности данных
+innodb_buffer_pool_size = 1G		// под кэш задается 30% от доступной на сервере оперативной памяти
+innodb_log_file_size = 100M		// размер файла логов операций
+
+skip-host-cache
+skip-name-resolve
+datadir=/var/lib/mysql
+socket=/var/run/mysqld/mysqld.sock
+secure-file-priv=/var/lib/mysql-files
+user=mysql
+
+pid-file=/var/run/mysqld/mysqld.pid
+[client]
+socket=/var/run/mysqld/mysqld.sock
+
+!includedir /etc/mysql/conf.d/
+```
 ---
 
 ### Как оформить ДЗ
